@@ -1,16 +1,25 @@
 
 import { useState, KeyboardEvent } from 'react';
-import { Search } from 'lucide-react';
+import { Search, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface SearchBarProps {
   onSearch: (location: string) => void;
+  onUseCurrentLocation: () => void;
   isLoading: boolean;
   defaultValue?: string;
+  isUsingGeolocation?: boolean;
 }
 
-const SearchBar = ({ onSearch, isLoading, defaultValue = '' }: SearchBarProps) => {
+const SearchBar = ({ 
+  onSearch, 
+  onUseCurrentLocation, 
+  isLoading, 
+  defaultValue = '',
+  isUsingGeolocation = false
+}: SearchBarProps) => {
   const [query, setQuery] = useState(defaultValue);
 
   const handleSearch = () => {
@@ -40,6 +49,22 @@ const SearchBar = ({ onSearch, isLoading, defaultValue = '' }: SearchBarProps) =
       >
         <Search className="h-5 w-5" />
       </Button>
+      
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button 
+            onClick={onUseCurrentLocation} 
+            disabled={isLoading}
+            variant={isUsingGeolocation ? "default" : "outline"} 
+            className={`rounded-full w-10 h-10 p-0 ${isUsingGeolocation ? 'bg-white/50 hover:bg-white/70' : 'bg-white/20 hover:bg-white/30'}`}
+          >
+            <MapPin className="h-5 w-5" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Use current location</p>
+        </TooltipContent>
+      </Tooltip>
     </div>
   );
 };

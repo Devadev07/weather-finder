@@ -8,7 +8,14 @@ import { isDayTime } from "@/utils/weatherUtils";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const Index = () => {
-  const { weatherData, isLoading, searchLocation, location } = useWeather();
+  const { 
+    weatherData, 
+    isLoading, 
+    searchLocation, 
+    useCurrentLocation,
+    isUsingGeolocation,
+    location 
+  } = useWeather();
   const [isDay, setIsDay] = useState(true);
   
   useEffect(() => {
@@ -30,9 +37,11 @@ const Index = () => {
         
         <div className="w-full max-w-2xl flex flex-col items-center gap-8">
           <SearchBar 
-            onSearch={searchLocation} 
+            onSearch={searchLocation}
+            onUseCurrentLocation={useCurrentLocation}
             isLoading={isLoading}
             defaultValue={location}
+            isUsingGeolocation={isUsingGeolocation}
           />
           
           {isLoading ? (
@@ -44,7 +53,9 @@ const Index = () => {
           ) : (
             <div className="glass-card p-8 rounded-xl text-center animate-fade-in">
               <p className="text-xl text-white/80">
-                Search for a location to see the weather.
+                {isUsingGeolocation 
+                  ? "Detecting your location..." 
+                  : "Search for a location to see the weather."}
               </p>
             </div>
           )}
