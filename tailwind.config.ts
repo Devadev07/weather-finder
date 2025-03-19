@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,14 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				weather: {
+					'sunny': '#FFD86E',
+					'cloudy': '#B4C4DF',
+					'rainy': '#96B1D0',
+					'snowy': '#E5F1FF',
+					'stormy': '#8D93AB',
+					'foggy': '#C8D6EB',
 				}
 			},
 			borderRadius: {
@@ -84,11 +93,56 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'float': {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-10px)' }
+				},
+				'pulse-soft': {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0.8' }
+				},
+				'fade-in': {
+					from: { opacity: '0', transform: 'translateY(10px)' },
+					to: { opacity: '1', transform: 'translateY(0)' }
+				},
+				'spin-slow': {
+					from: { transform: 'rotate(0deg)' },
+					to: { transform: 'rotate(360deg)' }
+				},
+				'rain': {
+					'0%': { transform: 'translateY(-20px)' },
+					'100%': { transform: 'translateY(100vh)' }
+				},
+				'snow': {
+					'0%': { transform: 'translateY(-20px) translateX(0)' },
+					'50%': { transform: 'translateY(50vh) translateX(20px)' },
+					'100%': { transform: 'translateY(100vh) translateX(0)' }
+				},
+				'lightning': {
+					'0%, 100%': { opacity: '0' },
+					'10%, 30%, 50%, 70%, 90%': { opacity: '0' },
+					'20%, 40%, 60%, 80%': { opacity: '1' }
+				},
+				'fog': {
+					'0%': { transform: 'translateX(-100%)' },
+					'100%': { transform: 'translateX(100%)' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'float': 'float 3s ease-in-out infinite',
+				'pulse-soft': 'pulse-soft 2s ease-in-out infinite',
+				'fade-in': 'fade-in 0.5s ease-out',
+				'spin-slow': 'spin-slow 20s linear infinite',
+				'rain': 'rain 1s linear infinite',
+				'snow': 'snow 10s linear infinite',
+				'lightning': 'lightning 5s ease-in-out infinite',
+				'fog': 'fog 20s linear infinite'
+			},
+			backdropBlur: {
+				'xs': '2px',
 			}
 		}
 	},
