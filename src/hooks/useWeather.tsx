@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { WEATHER_API_KEY, WEATHER_API_URL, DEFAULT_LOCATION } from '@/lib/constants';
+import { WEATHER_API_KEY_STORAGE_KEY, WEATHER_API_URL, DEFAULT_LOCATION } from '@/lib/constants';
 import { formatWeatherData, WeatherData } from '@/utils/weatherUtils';
 import { toast } from 'sonner';
 
@@ -19,10 +19,33 @@ export const useWeather = ({ initialLocation = DEFAULT_LOCATION }: UseWeatherPro
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [coordinates, setCoordinates] = useState<Coordinates | null>(null);
   const [isUsingGeolocation, setIsUsingGeolocation] = useState<boolean>(false);
+  const [hasApiKey, setHasApiKey] = useState<boolean>(false);
+
+  useEffect(() => {
+    const savedApiKey = localStorage.getItem(WEATHER_API_KEY_STORAGE_KEY);
+    setHasApiKey(!!savedApiKey);
+  }, []);
+
+  // Check for API key updates (e.g., after user submits one)
+  const checkForApiKey = () => {
+    const savedApiKey = localStorage.getItem(WEATHER_API_KEY_STORAGE_KEY);
+    setHasApiKey(!!savedApiKey);
+  };
+
+  // Function to get the API key from localStorage
+  const getApiKey = () => {
+    return localStorage.getItem(WEATHER_API_KEY_STORAGE_KEY) || '';
+  };
 
   // Function to fetch weather by city name
   const fetchWeatherByCity = async (locationQuery: string): Promise<WeatherData> => {
-    const response = await fetch(`${WEATHER_API_URL}/weather?q=${locationQuery}&appid=${WEATHER_API_KEY}`);
+    const apiKey = getApiKey();
+    
+    if (!apiKey) {
+      throw new Error('API key is required');
+    }
+    
+    const response = await fetch(`${WEATHER_API_URL}/weather?q=${locationQuery}&appid=${apiKey}`);
     
     if (!response.ok) {
       const errorData = await response.json();
@@ -35,8 +58,14 @@ export const useWeather = ({ initialLocation = DEFAULT_LOCATION }: UseWeatherPro
 
   // Function to fetch weather by coordinates
   const fetchWeatherByCoordinates = async (coords: Coordinates): Promise<WeatherData> => {
+    const apiKey = getApiKey();
+    
+    if (!apiKey) {
+      throw new Error('API key is required');
+    }
+    
     const response = await fetch(
-      `${WEATHER_API_URL}/weather?lat=${coords.lat}&lon=${coords.lon}&appid=${WEATHER_API_KEY}`
+      `${WEATHER_API_URL}/weather?lat=${coords.lat}&lon=${coords.lon}&appid=${apiKey}`
     );
     
     if (!response.ok) {
@@ -76,18 +105,18 @@ export const useWeather = ({ initialLocation = DEFAULT_LOCATION }: UseWeatherPro
 
   // Query for city-based weather data
   const cityQuery = useQuery({
-    queryKey: ['weather', 'city', location],
+    queryKey: ['weather', 'city', location, hasApiKey],
     queryFn: () => fetchWeatherByCity(location),
-    enabled: !!location && !isUsingGeolocation,
+    enabled: !!location && !isUsingGeolocation && hasApiKey,
     refetchOnWindowFocus: false,
     retry: 1,
   });
 
   // Query for coordinate-based weather data
   const coordinatesQuery = useQuery({
-    queryKey: ['weather', 'coordinates', coordinates?.lat, coordinates?.lon],
+    queryKey: ['weather', 'coordinates', coordinates?.lat, coordinates?.lon, hasApiKey],
     queryFn: () => fetchWeatherByCoordinates(coordinates!),
-    enabled: !!coordinates && isUsingGeolocation,
+    enabled: !!coordinates && isUsingGeolocation && hasApiKey,
     refetchOnWindowFocus: false,
     retry: 1,
   });
@@ -98,8 +127,10 @@ export const useWeather = ({ initialLocation = DEFAULT_LOCATION }: UseWeatherPro
 
   // Use effect to initialize geolocation on component mount
   useEffect(() => {
-    detectUserLocation();
-  }, []);
+    if (hasApiKey) {
+      detectUserLocation();
+    }
+  }, [hasApiKey]);
 
   useEffect(() => {
     if (data) {
@@ -109,9 +140,17 @@ export const useWeather = ({ initialLocation = DEFAULT_LOCATION }: UseWeatherPro
 
   useEffect(() => {
     if (isError && error instanceof Error) {
-      toast.error(`Error: ${error.message}`, {
-        description: 'Please check the location and try again.',
-      });
+      if (error.message.includes('API key')) {
+        setHasApiKey(false);
+        localStorage.removeItem(WEATHER_API_KEY_STORAGE_KEY);
+        toast.error('Invalid API key', {
+          description: 'Please check your API key and try again.',
+        });
+      } else {
+        toast.error(`Error: ${error.message}`, {
+          description: 'Please check the location and try again.',
+        });
+      }
     }
   }, [isError, error]);
 
@@ -139,6 +178,8 @@ export const useWeather = ({ initialLocation = DEFAULT_LOCATION }: UseWeatherPro
     useCurrentLocation,
     isUsingGeolocation,
     refetch,
-    location
+    location,
+    hasApiKey,
+    checkForApiKey
   };
 };
