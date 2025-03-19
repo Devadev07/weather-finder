@@ -1,5 +1,8 @@
 
-export const WEATHER_API_KEY = "insert_your_api_key_here"; // Replace with your actual API key
+// You need to replace this with your actual API key from OpenWeatherMap
+// Sign up at https://openweathermap.org/api and generate a key
+export const WEATHER_API_KEY = "insert_your_api_key_here"; 
+
 export const WEATHER_API_URL = "https://api.openweathermap.org/data/2.5";
 
 export const WEATHER_TYPES = {
