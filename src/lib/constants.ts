@@ -2,6 +2,9 @@
 // API key will be stored in localStorage
 export const WEATHER_API_KEY_STORAGE_KEY = "weather_api_key";
 
+// Default API key
+export const DEFAULT_WEATHER_API_KEY = "285e08af8ccf41709804ee8a21753dea";
+
 export const WEATHER_API_URL = "https://api.openweathermap.org/data/2.5";
 
 export const WEATHER_TYPES = {

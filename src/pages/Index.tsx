@@ -4,7 +4,6 @@ import { useWeather } from "@/hooks/useWeather";
 import SearchBar from "@/components/SearchBar";
 import WeatherCard from "@/components/WeatherCard";
 import WeatherAnimation from "@/components/WeatherAnimation";
-import ApiKeyForm from "@/components/ApiKeyForm";
 import { isDayTime } from "@/utils/weatherUtils";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -15,9 +14,7 @@ const Index = () => {
     searchLocation, 
     useCurrentLocation,
     isUsingGeolocation,
-    location,
-    hasApiKey,
-    checkForApiKey
+    location
   } = useWeather();
   const [isDay, setIsDay] = useState(true);
   
@@ -26,10 +23,6 @@ const Index = () => {
       setIsDay(isDayTime(weatherData.dateTime, weatherData.sunrise, weatherData.sunset));
     }
   }, [weatherData]);
-
-  const handleApiKeySubmit = () => {
-    checkForApiKey();
-  };
 
   return (
     <div className={`weather-container ${weatherData?.weatherType || 'default'}`}>
@@ -43,34 +36,28 @@ const Index = () => {
         </h1>
         
         <div className="w-full max-w-2xl flex flex-col items-center gap-8">
-          {hasApiKey ? (
-            <>
-              <SearchBar 
-                onSearch={searchLocation}
-                onUseCurrentLocation={useCurrentLocation}
-                isLoading={isLoading}
-                defaultValue={location}
-                isUsingGeolocation={isUsingGeolocation}
-              />
-              
-              {isLoading ? (
-                <div className="w-full max-w-md animate-fade-in">
-                  <Skeleton className="h-[280px] w-full rounded-xl bg-white/20" />
-                </div>
-              ) : weatherData ? (
-                <WeatherCard weatherData={weatherData} />
-              ) : (
-                <div className="glass-card p-8 rounded-xl text-center animate-fade-in">
-                  <p className="text-xl text-white/80">
-                    {isUsingGeolocation 
-                      ? "Detecting your location..." 
-                      : "Search for a location to see the weather."}
-                  </p>
-                </div>
-              )}
-            </>
+          <SearchBar 
+            onSearch={searchLocation}
+            onUseCurrentLocation={useCurrentLocation}
+            isLoading={isLoading}
+            defaultValue={location}
+            isUsingGeolocation={isUsingGeolocation}
+          />
+          
+          {isLoading ? (
+            <div className="w-full max-w-md animate-fade-in">
+              <Skeleton className="h-[280px] w-full rounded-xl bg-white/20" />
+            </div>
+          ) : weatherData ? (
+            <WeatherCard weatherData={weatherData} />
           ) : (
-            <ApiKeyForm onApiKeySubmit={handleApiKeySubmit} />
+            <div className="glass-card p-8 rounded-xl text-center animate-fade-in">
+              <p className="text-xl text-white/80">
+                {isUsingGeolocation 
+                  ? "Detecting your location..." 
+                  : "Search for a location to see the weather."}
+              </p>
+            </div>
           )}
         </div>
       </div>
