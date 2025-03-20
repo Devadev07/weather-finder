@@ -88,22 +88,38 @@ const WeatherAnimation = ({ weatherType, isDay }: WeatherAnimationProps) => {
       case WEATHER_TYPES.STORMY:
         return (
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <CloudLightning className="absolute text-white/80 h-20 w-20 top-16 right-20 animate-float" />
-            <CloudLightning className="absolute text-white/70 h-16 w-16 top-32 right-60 animate-float" style={{ animationDelay: '1.5s' }} />
+            <div className="storm-clouds">
+              <CloudLightning className="absolute text-white/80 h-20 w-20 top-16 right-20 animate-float" />
+              <CloudLightning className="absolute text-white/70 h-16 w-16 top-32 right-60 animate-float" style={{ animationDelay: '1.5s' }} />
+              <CloudLightning className="absolute text-white/80 h-24 w-24 top-12 right-40 animate-float" style={{ animationDelay: '2.2s' }} />
+            </div>
             
-            {/* Lightning */}
-            <div className="absolute w-full h-full bg-white/10 animate-lightning"></div>
+            {/* Enhanced Lightning Effects */}
+            <div className="lightning-container absolute inset-0">
+              <div className="lightning absolute opacity-0 w-[2px] h-40 bg-white top-[10%] right-[30%] animate-lightning-strike" style={{ animationDelay: '1.2s' }}></div>
+              <div className="lightning absolute opacity-0 w-[3px] h-60 bg-white top-[5%] right-[20%] animate-lightning-strike" style={{ animationDelay: '4.5s' }}></div>
+              <div className="lightning absolute opacity-0 w-[2px] h-50 bg-white top-[8%] right-[40%] animate-lightning-strike" style={{ animationDelay: '7.8s' }}></div>
+              
+              {/* Lightning flash effect */}
+              <div className="lightning-flash absolute inset-0 bg-white/5 opacity-0 animate-lightning-flash"></div>
+              <div className="lightning-flash absolute inset-0 bg-white/5 opacity-0 animate-lightning-flash" style={{ animationDelay: '4.5s' }}></div>
+              <div className="lightning-flash absolute inset-0 bg-white/5 opacity-0 animate-lightning-flash" style={{ animationDelay: '7.8s' }}></div>
+            </div>
+            
+            {/* Thunder Sound (Visual Indicator) */}
+            <div className="thunder-ripple absolute w-20 h-20 rounded-full bg-white/5 opacity-0 top-[20%] right-[25%] animate-thunder-ripple" style={{ animationDelay: '1.5s' }}></div>
+            <div className="thunder-ripple absolute w-30 h-30 rounded-full bg-white/5 opacity-0 top-[15%] right-[22%] animate-thunder-ripple" style={{ animationDelay: '4.8s' }}></div>
             
             {/* Rain */}
-            {Array.from({ length: 15 }).map((_, i) => (
+            {Array.from({ length: 30 }).map((_, i) => (
               <div 
                 key={i}
-                className="absolute bg-blue-100/70 w-0.5 h-10 rounded-full animate-rain"
+                className="absolute bg-blue-100/70 w-0.5 h-10 rounded-full animate-heavy-rain"
                 style={{ 
                   top: -30, 
-                  left: `${20 + Math.random() * 60}%`,
+                  left: `${10 + Math.random() * 80}%`,
                   animationDelay: `${Math.random() * 5}s`,
-                  animationDuration: `${0.5 + Math.random() * 1}s`
+                  animationDuration: `${0.3 + Math.random() * 0.7}s`
                 }}
               />
             ))}

@@ -19,26 +19,69 @@ interface Coordinates {
   lon: number;
 }
 
+interface LocationSuggestion {
+  name: string;
+  country: string;
+  state?: string;
+  lat: number;
+  lon: number;
+}
+
 export const useWeather = ({ initialLocation = DEFAULT_LOCATION }: UseWeatherProps = {}) => {
   const [location, setLocation] = useState<string>(initialLocation);
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [coordinates, setCoordinates] = useState<Coordinates | null>(null);
   const [isUsingGeolocation, setIsUsingGeolocation] = useState<boolean>(false);
-  const [hasApiKey, setHasApiKey] = useState<boolean>(true); // Set to true by default since we have a default API key
+  const [hasApiKey, setHasApiKey] = useState<boolean>(true);
+  const [locationSuggestions, setLocationSuggestions] = useState<LocationSuggestion[]>([]);
 
   useEffect(() => {
     checkForApiKey();
   }, []);
 
-  // Check for API key updates (e.g., after user submits one)
+  // Check for API key updates
   const checkForApiKey = () => {
-    // We always have an API key now (default or user-provided), so this is always true
     setHasApiKey(true);
   };
 
   // Function to get the API key from localStorage or use the default
   const getApiKey = () => {
     return localStorage.getItem(WEATHER_API_KEY_STORAGE_KEY) || DEFAULT_WEATHER_API_KEY;
+  };
+
+  // Function to fetch location suggestions
+  const fetchLocationSuggestions = async (query: string) => {
+    if (query.length < 3) {
+      setLocationSuggestions([]);
+      return;
+    }
+    
+    try {
+      const apiKey = getApiKey();
+      const response = await fetch(
+        `https://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=5&appid=${apiKey}`
+      );
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch location suggestions');
+      }
+      
+      const data = await response.json();
+      
+      // Format the suggestions
+      const suggestions = data.map((item: any) => ({
+        name: item.name,
+        country: item.country,
+        state: item.state,
+        lat: item.lat,
+        lon: item.lon
+      }));
+      
+      setLocationSuggestions(suggestions);
+    } catch (error) {
+      console.error('Error fetching location suggestions:', error);
+      setLocationSuggestions([]);
+    }
   };
 
   // Function to fetch weather by city name
@@ -166,6 +209,8 @@ export const useWeather = ({ initialLocation = DEFAULT_LOCATION }: UseWeatherPro
     refetch,
     location,
     hasApiKey,
-    checkForApiKey
+    checkForApiKey,
+    locationSuggestions,
+    fetchLocationSuggestions
   };
 };

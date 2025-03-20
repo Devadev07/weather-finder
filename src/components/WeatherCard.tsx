@@ -18,16 +18,12 @@ const WeatherCard = ({ weatherData }: WeatherCardProps) => {
     windSpeed,
     description,
     dateTime,
-    timezone,
-    sunrise,
-    sunset
+    timezone
   } = weatherData;
 
   const formattedDate = getFormattedDate(dateTime, timezone);
   const formattedTime = getFormattedTime(dateTime, timezone);
-  const sunriseTime = getFormattedTime(sunrise, timezone);
-  const sunsetTime = getFormattedTime(sunset, timezone);
-  const isDay = isDayTime(dateTime, sunrise, sunset);
+  const isDay = isDayTime(dateTime, weatherData.sunrise, weatherData.sunset);
 
   return (
     <Card className="w-full max-w-md glass-card animate-fade-in">
@@ -44,13 +40,8 @@ const WeatherCard = ({ weatherData }: WeatherCardProps) => {
       </CardHeader>
       <CardContent>
         <div className="flex flex-col space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center">
             <div className="text-xl font-medium capitalize">{description}</div>
-            <div className="flex items-center text-sm gap-2">
-              <span>Sunrise: {sunriseTime}</span>
-              <span>•</span>
-              <span>Sunset: {sunsetTime}</span>
-            </div>
           </div>
           
           <Separator className="bg-white/20" />

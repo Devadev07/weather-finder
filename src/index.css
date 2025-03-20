@@ -125,7 +125,7 @@
   }
 
   .weather-container.stormy {
-    background-image: linear-gradient(to bottom right, #8D93AB, #5B6178);
+    background-image: linear-gradient(to bottom right, #4A4E69, #22223B);
   }
 
   .weather-container.foggy {
@@ -139,6 +139,167 @@
   .search-bar:focus-within {
     transform: translateY(-2px);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Enhanced animations */
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  @keyframes pulse-soft {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scale(0.97);
+    }
+  }
+
+  @keyframes rain {
+    0% {
+      transform: translateY(-30px);
+      opacity: 0;
+    }
+    10% {
+      opacity: 0.7;
+    }
+    90% {
+      opacity: 0.7;
+    }
+    100% {
+      transform: translateY(100vh);
+      opacity: 0;
+    }
+  }
+
+  @keyframes heavy-rain {
+    0% {
+      transform: translateY(-30px) rotate(15deg);
+      opacity: 0;
+    }
+    5% {
+      opacity: 0.7;
+    }
+    95% {
+      opacity: 0.7;
+    }
+    100% {
+      transform: translateY(100vh) rotate(15deg);
+      opacity: 0;
+    }
+  }
+
+  @keyframes snow {
+    0% {
+      transform: translateY(-10px) rotate(0deg);
+      opacity: 0;
+    }
+    10% {
+      opacity: 0.8;
+    }
+    90% {
+      opacity: 0.8;
+    }
+    100% {
+      transform: translateY(100vh) rotate(360deg);
+      opacity: 0;
+    }
+  }
+
+  @keyframes fog {
+    0% {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    20% {
+      opacity: 0.5;
+    }
+    80% {
+      opacity: 0.5;
+    }
+    100% {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+  }
+
+  /* New thunderstorm animations */
+  @keyframes lightning-strike {
+    0%, 95%, 100% {
+      opacity: 0;
+      transform: scaleY(0);
+      transform-origin: top;
+    }
+    96%, 98% {
+      opacity: 1;
+      transform: scaleY(1);
+    }
+  }
+
+  @keyframes lightning-flash {
+    0%, 95%, 100% {
+      opacity: 0;
+    }
+    96%, 98% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes thunder-ripple {
+    0%, 95% {
+      transform: scale(0);
+      opacity: 0;
+    }
+    96% {
+      opacity: 0.5;
+    }
+    100% {
+      transform: scale(4);
+      opacity: 0;
+    }
+  }
+
+  .animate-float {
+    animation: float 4s ease-in-out infinite;
+  }
+
+  .animate-pulse-soft {
+    animation: pulse-soft 3s ease-in-out infinite;
+  }
+
+  .animate-rain {
+    animation: rain 1.5s linear infinite;
+  }
+
+  .animate-heavy-rain {
+    animation: heavy-rain 0.8s linear infinite;
+  }
+
+  .animate-snow {
+    animation: snow 8s linear infinite;
+  }
+
+  .animate-fog {
+    animation: fog 20s linear infinite;
+  }
+
+  .animate-lightning-strike {
+    animation: lightning-strike 10s linear infinite;
+  }
+
+  .animate-lightning-flash {
+    animation: lightning-flash 10s linear infinite;
+  }
+
+  .animate-thunder-ripple {
+    animation: thunder-ripple 10s ease-out infinite;
   }
 }
 

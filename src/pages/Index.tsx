@@ -14,7 +14,9 @@ const Index = () => {
     searchLocation, 
     useCurrentLocation,
     isUsingGeolocation,
-    location
+    location,
+    locationSuggestions,
+    fetchLocationSuggestions
   } = useWeather();
   const [isDay, setIsDay] = useState(true);
   
@@ -32,7 +34,7 @@ const Index = () => {
       
       <div className="container mx-auto px-4 min-h-screen flex flex-col items-center justify-center py-20">
         <h1 className="text-4xl font-bold mb-12 text-white drop-shadow-md animate-fade-in">
-          Aether Weather
+          Weather
         </h1>
         
         <div className="w-full max-w-2xl flex flex-col items-center gap-8">
@@ -42,6 +44,8 @@ const Index = () => {
             isLoading={isLoading}
             defaultValue={location}
             isUsingGeolocation={isUsingGeolocation}
+            suggestions={locationSuggestions}
+            onInputChange={fetchLocationSuggestions}
           />
           
           {isLoading ? (
