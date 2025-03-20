@@ -58,15 +58,29 @@ export const formatWeatherData = (data: any): WeatherData => {
 };
 
 export const getFormattedTime = (timestamp: number, timezone: number): string => {
-  // Convert timestamp to milliseconds and adjust for timezone offset
-  const date = new Date((timestamp + timezone) * 1000);
-  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+  // Create a date using UTC time
+  const date = new Date(timestamp * 1000);
+  
+  // Calculate the UTC time in milliseconds
+  const utcTime = date.getTime() + (date.getTimezoneOffset() * 60000);
+  
+  // Add the location's timezone offset (in seconds converted to milliseconds)
+  const locationTime = new Date(utcTime + (timezone * 1000));
+  
+  return locationTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
 };
 
 export const getFormattedDate = (timestamp: number, timezone: number): string => {
-  // Convert timestamp to milliseconds and adjust for timezone offset
-  const date = new Date((timestamp + timezone) * 1000);
-  return date.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' });
+  // Create a date using UTC time
+  const date = new Date(timestamp * 1000);
+  
+  // Calculate the UTC time in milliseconds
+  const utcTime = date.getTime() + (date.getTimezoneOffset() * 60000);
+  
+  // Add the location's timezone offset (in seconds converted to milliseconds)
+  const locationTime = new Date(utcTime + (timezone * 1000));
+  
+  return locationTime.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' });
 };
 
 export const isDayTime = (current: number, sunrise: number, sunset: number): boolean => {

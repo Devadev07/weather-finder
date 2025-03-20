@@ -55,7 +55,7 @@ const Index = () => {
           ) : weatherData ? (
             <WeatherCard weatherData={weatherData} />
           ) : (
-            <div className="glass-card p-8 rounded-xl text-center animate-fade-in">
+            <div className="backdrop-blur-md bg-white/20 border border-white/30 p-8 rounded-xl text-center animate-fade-in">
               <p className="text-xl text-white/80">
                 {isUsingGeolocation 
                   ? "Detecting your location..." 
