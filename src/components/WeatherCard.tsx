@@ -1,7 +1,6 @@
 
-import { WeatherData, getFormattedDate, getFormattedTime, isDayTime } from "@/utils/weatherUtils";
+import { WeatherData, getFormattedDate, isDayTime } from "@/utils/weatherUtils";
 import { Droplets, Wind, ThermometerSun } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
 interface WeatherCardProps {
@@ -22,7 +21,6 @@ const WeatherCard = ({ weatherData }: WeatherCardProps) => {
   } = weatherData;
 
   const formattedDate = getFormattedDate(dateTime, timezone);
-  const formattedTime = getFormattedTime(dateTime, timezone);
   const isDay = isDayTime(dateTime, weatherData.sunrise, weatherData.sunset);
 
   return (
@@ -32,7 +30,7 @@ const WeatherCard = ({ weatherData }: WeatherCardProps) => {
           <div>
             <h3 className="text-2xl font-bold text-white">{location}, {country}</h3>
             <p className="text-lg font-medium mt-1 text-white/80">
-              {formattedDate}, {formattedTime}
+              {formattedDate}
             </p>
           </div>
           <div className="text-5xl font-bold text-white">{temperature}°</div>
