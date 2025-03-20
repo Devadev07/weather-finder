@@ -1,67 +1,18 @@
-
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Weather App</title>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="icon" type="image/svg+xml" href="favicon.ico">
-</head>
-<body>
-  <div id="weather-container" class="weather-container default">
-    <div id="weather-animation"></div>
-    
-    <div class="container">
-      <h1 class="heading">Weather</h1>
-      
-      <div class="content">
-        <div class="search-bar-container">
-          <div class="search-bar">
-            <div class="search-input-wrapper">
-              <input 
-                type="search" 
-                id="search-input" 
-                placeholder="Search location..." 
-                class="search-input"
-              >
-              <button id="clear-button" class="clear-button">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-              </button>
-            </div>
-            <button id="search-button" class="action-button search-button">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-            </button>
-            <button id="location-button" class="action-button location-button" title="Use current location">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-            </button>
-          </div>
-          
-          <div id="suggestions-container" class="suggestions hidden">
-            <ul id="suggestions-list" class="suggestions-list"></ul>
-          </div>
-        </div>
-        
-        <div id="weather-display">
-          <div id="loading-indicator" class="weather-skeleton hidden">
-            <div class="skeleton"></div>
-          </div>
-          
-          <div id="weather-card" class="hidden">
-            <!-- Weather card will be populated by JavaScript -->
-          </div>
-          
-          <div id="start-message" class="start-message">
-            <p>Search for a location to see the weather.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <div id="toast-container" class="toast-container"></div>
-  
-  <script src="weather-utils.js"></script>
-  <script src="app.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>sunnycloud-search</title>
+    <meta name="description" content="Lovable Generated Project" />
+    <meta name="author" content="Lovable" />
+    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
+    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>
