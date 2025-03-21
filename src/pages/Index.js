@@ -1,10 +1,10 @@
 
-import { useState, useEffect } from "react";
-import { useWeather } from "@/hooks/useWeather";
-import SearchBar from "@/components/SearchBar";
-import WeatherCard from "@/components/WeatherCard";
-import WeatherAnimation from "@/components/WeatherAnimation";
-import { isDayTime } from "@/utils/weatherUtils";
+import React, { useState, useEffect } from "react";
+import { useWeather } from "../hooks/useWeather.js";
+import SearchBar from "../components/SearchBar.js";
+import WeatherCard from "../components/WeatherCard.js";
+import WeatherAnimation from "../components/WeatherAnimation.js";
+import { isDayTime } from "../utils/weatherUtils.js";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const Index = () => {

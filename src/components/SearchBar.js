@@ -1,133 +1,150 @@
 
-import { useState, useEffect, useRef } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Loader2, Search, MapPin } from "lucide-react";
+import React, { useState, useRef, useEffect } from 'react';
+import { Search, MapPin, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 const SearchBar = ({ 
   onSearch, 
   onUseCurrentLocation, 
-  isLoading = false,
-  defaultValue = "",
+  onInputChange,
+  isLoading, 
+  defaultValue = '',
   isUsingGeolocation = false,
-  suggestions = [],
-  onInputChange = () => {}
+  suggestions = []
 }) => {
-  const [searchTerm, setSearchTerm] = useState(defaultValue);
+  const [query, setQuery] = useState(defaultValue);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const suggestionsRef = useRef(null);
   const inputRef = useRef(null);
-  
-  // Close suggestions when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (suggestionsRef.current && !suggestionsRef.current.contains(event.target) && 
-          inputRef.current && !inputRef.current.contains(event.target)) {
-        setShowSuggestions(false);
-      }
-    };
-    
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-  
-  useEffect(() => {
-    setSearchTerm(defaultValue);
-  }, [defaultValue]);
-  
-  const handleSearchChange = (e) => {
-    const value = e.target.value;
-    setSearchTerm(value);
-    onInputChange(value);
-    
-    if (value.trim().length > 0) {
+
+  const handleSearch = () => {
+    if (query.trim()) {
+      onSearch(query);
+      setShowSuggestions(false);
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
+  const handleInputChange = (value) => {
+    setQuery(value);
+    if (onInputChange && value.trim().length > 2) {
+      onInputChange(value);
       setShowSuggestions(true);
     } else {
       setShowSuggestions(false);
     }
   };
-  
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (searchTerm.trim()) {
-      onSearch(searchTerm);
-      setShowSuggestions(false);
-    }
-  };
-  
+
   const handleSuggestionClick = (suggestion) => {
-    const locationName = suggestion.city;
-    setSearchTerm(locationName);
-    onSearch(locationName);
+    const locationString = suggestion.state 
+      ? `${suggestion.name}, ${suggestion.state}, ${suggestion.country}`
+      : `${suggestion.name}, ${suggestion.country}`;
+    
+    setQuery(locationString);
+    onSearch(locationString);
     setShowSuggestions(false);
   };
-  
+
+  const clearInput = () => {
+    setQuery('');
+    setShowSuggestions(false);
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
+
+  // Close suggestions when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (suggestionsRef.current && !suggestionsRef.current.contains(event.target)) {
+        setShowSuggestions(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
-    <form onSubmit={handleSubmit} className="relative w-full max-w-sm">
-      <div className="flex items-center space-x-2">
-        <div className="relative flex-1" ref={inputRef}>
+    <div className="search-bar-container w-full max-w-lg relative">
+      <div className="search-bar flex w-full items-center space-x-2 glass-morphism p-1.5 rounded-full animate-fade-in">
+        <div className="relative flex-1">
           <Input
+            ref={inputRef}
             type="search"
             placeholder="Search location..."
-            value={searchTerm}
-            onChange={handleSearchChange}
-            onFocus={() => searchTerm.trim().length > 0 && setShowSuggestions(true)}
-            className="pl-3 pr-10 h-11 bg-white/20 backdrop-blur-md border-white/30 text-white placeholder:text-white/70 focus-visible:ring-white/50"
+            value={query}
+            onChange={(e) => handleInputChange(e.target.value)}
+            onKeyUp={handleKeyPress}
+            className="flex-1 border-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-foreground/70 pr-10"
           />
+          {query && (
+            <button 
+              onClick={clearInput}
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 text-foreground/70 hover:text-foreground"
+            >
+              <X size={16} />
+            </button>
+          )}
         </div>
-        
         <Button 
-          type="submit" 
-          size="icon" 
-          variant="secondary" 
-          className="h-11 w-11 bg-white/20 backdrop-blur-md border-white/30 hover:bg-white/30"
-          disabled={isLoading || !searchTerm.trim()}
+          onClick={handleSearch} 
+          disabled={isLoading} 
+          className="bg-white/30 hover:bg-white/50 text-foreground/90 rounded-full w-10 h-10 p-0"
         >
-          {isLoading ? (
-            <Loader2 className="h-5 w-5 text-white animate-spin" />
-          ) : (
-            <Search className="h-5 w-5 text-white" />
-          )}
+          <Search className="h-5 w-5" />
         </Button>
         
-        <Button 
-          type="button" 
-          size="icon" 
-          variant="secondary" 
-          className="h-11 w-11 bg-white/20 backdrop-blur-md border-white/30 hover:bg-white/30"
-          onClick={onUseCurrentLocation}
-          disabled={isLoading || isUsingGeolocation}
-        >
-          {isUsingGeolocation ? (
-            <Loader2 className="h-5 w-5 text-white animate-spin" />
-          ) : (
-            <MapPin className="h-5 w-5 text-white" />
-          )}
-        </Button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button 
+              onClick={onUseCurrentLocation} 
+              disabled={isLoading}
+              variant={isUsingGeolocation ? "default" : "outline"} 
+              className={`rounded-full w-10 h-10 p-0 ${isUsingGeolocation ? 'bg-white/50 hover:bg-white/70' : 'bg-white/20 hover:bg-white/30'}`}
+            >
+              <MapPin className="h-5 w-5" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Use current location</p>
+          </TooltipContent>
+        </Tooltip>
       </div>
-      
-      {showSuggestions && suggestions && suggestions.length > 0 && (
+
+      {/* Location suggestions */}
+      {showSuggestions && suggestions.length > 0 && (
         <div 
           ref={suggestionsRef}
-          className="absolute top-full left-0 right-0 mt-1 bg-white/90 backdrop-blur-md rounded-md shadow-lg overflow-hidden z-10 max-h-60 overflow-y-auto"
+          className="suggestions absolute z-20 mt-2 w-full bg-white/90 backdrop-blur-md rounded-lg shadow-lg overflow-hidden max-h-60 overflow-y-auto"
         >
-          {suggestions.map((suggestion) => (
-            <div 
-              key={suggestion.id || suggestion.city} 
-              className="px-4 py-2 hover:bg-black/5 cursor-pointer transition-colors"
-              onClick={() => handleSuggestionClick(suggestion)}
-            >
-              <div className="font-medium">{suggestion.city}</div>
-              <div className="text-sm text-gray-500">
-                {suggestion.countryCode}, {suggestion.region || suggestion.country}
-              </div>
-            </div>
-          ))}
+          <ul className="divide-y divide-gray-100">
+            {suggestions.map((suggestion, index) => (
+              <li 
+                key={index} 
+                className="px-4 py-2 hover:bg-white/50 cursor-pointer transition-colors"
+                onClick={() => handleSuggestionClick(suggestion)}
+              >
+                <div className="font-medium">{suggestion.name}</div>
+                <div className="text-sm text-gray-600">
+                  {suggestion.state ? `${suggestion.state}, ` : ''}
+                  {suggestion.country}
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
-    </form>
+    </div>
   );
 };
 

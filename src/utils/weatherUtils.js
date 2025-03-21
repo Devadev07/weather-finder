@@ -1,5 +1,5 @@
 
-// Utility functions for weather data
+import { WEATHER_MAPPING, WEATHER_TYPES } from "../lib/constants.js";
 
 // Convert Kelvin to Celsius
 export function kelvinToCelsius(kelvin) {
@@ -14,11 +14,6 @@ export function kelvinToFahrenheit(kelvin) {
 // Convert meters per second to kilometers per hour
 export function metersPerSecToKmPerHour(mps) {
   return Math.round(mps * 3.6);
-}
-
-// Convert meters per second to miles per hour
-export function metersPerSecToMilesPerHour(mps) {
-  return Math.round(mps * 2.237);
 }
 
 // Get weather type based on icon code
@@ -78,28 +73,4 @@ export function getFormattedDate(timestamp, timezone) {
 // Check if it's daytime
 export function isDayTime(current, sunrise, sunset) {
   return current > sunrise && current < sunset;
-}
-
-// Toast function for showing notifications
-export function showToast(message, isError = false) {
-  // Create toast element
-  const toast = document.createElement('div');
-  toast.className = `toast ${isError ? 'toast-error' : 'toast-success'}`;
-  toast.textContent = message;
-  
-  // Add toast to the DOM
-  document.body.appendChild(toast);
-  
-  // Show the toast
-  setTimeout(() => {
-    toast.classList.add('show');
-  }, 100);
-  
-  // Remove the toast after a delay
-  setTimeout(() => {
-    toast.classList.remove('show');
-    setTimeout(() => {
-      document.body.removeChild(toast);
-    }, 300);
-  }, 3000);
 }

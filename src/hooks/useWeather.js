@@ -1,151 +1,199 @@
 
-import { useState, useEffect } from "react";
-import { toast } from "@/components/ui/use-toast";
+import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { 
+  WEATHER_API_KEY_STORAGE_KEY, 
+  WEATHER_API_URL, 
+  DEFAULT_LOCATION,
+  DEFAULT_WEATHER_API_KEY 
+} from '../lib/constants.js';
+import { formatWeatherData } from '../utils/weatherUtils.js';
+import { toast } from 'sonner';
 
-export const useWeather = () => {
+export const useWeather = ({ initialLocation = DEFAULT_LOCATION } = {}) => {
+  const [location, setLocation] = useState(initialLocation);
   const [weatherData, setWeatherData] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [location, setLocation] = useState("");
+  const [coordinates, setCoordinates] = useState(null);
   const [isUsingGeolocation, setIsUsingGeolocation] = useState(false);
+  const [hasApiKey, setHasApiKey] = useState(true);
   const [locationSuggestions, setLocationSuggestions] = useState([]);
-  
-  const API_KEY = localStorage.getItem(WEATHER_API_KEY_STORAGE_KEY) || DEFAULT_WEATHER_API_KEY;
-  
-  const fetchWeatherData = async (location) => {
-    try {
-      setIsLoading(true);
-      const response = await fetch(
-        `${WEATHER_API_URL}/weather?q=${location}&appid=${API_KEY}`
-      );
-      
-      if (!response.ok) {
-        throw new Error("Weather data not found");
-      }
-      
-      const data = await response.json();
-      const formattedData = formatWeatherData(data);
-      setWeatherData(formattedData);
-      
-      // Save recent search
-      saveRecentSearch(location);
-      
-      return formattedData;
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to fetch weather data",
-        variant: "destructive",
-      });
-      return null;
-    } finally {
-      setIsLoading(false);
-    }
+
+  useEffect(() => {
+    checkForApiKey();
+  }, []);
+
+  // Check for API key updates
+  const checkForApiKey = () => {
+    setHasApiKey(true);
   };
-  
-  const searchLocation = async (locationToSearch) => {
-    if (!locationToSearch) return;
-    
-    setLocation(locationToSearch);
-    await fetchWeatherData(locationToSearch);
+
+  // Function to get the API key from localStorage or use the default
+  const getApiKey = () => {
+    return localStorage.getItem(WEATHER_API_KEY_STORAGE_KEY) || DEFAULT_WEATHER_API_KEY;
   };
-  
+
+  // Function to fetch location suggestions
   const fetchLocationSuggestions = async (query) => {
-    if (!query || query.length < 2) {
+    if (query.length < 3) {
       setLocationSuggestions([]);
       return;
     }
     
     try {
+      const apiKey = getApiKey();
       const response = await fetch(
-        `${GEO_API_URL}/cities?namePrefix=${query}&limit=5`,
-        GEO_API_OPTIONS
+        `https://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=5&appid=${apiKey}`
       );
       
       if (!response.ok) {
-        throw new Error("Failed to fetch location suggestions");
+        throw new Error('Failed to fetch location suggestions');
       }
       
       const data = await response.json();
-      setLocationSuggestions(data.data || []);
+      
+      // Format the suggestions
+      const suggestions = data.map((item) => ({
+        name: item.name,
+        country: item.country,
+        state: item.state,
+        lat: item.lat,
+        lon: item.lon
+      }));
+      
+      setLocationSuggestions(suggestions);
     } catch (error) {
-      console.error("Error fetching location suggestions:", error);
+      console.error('Error fetching location suggestions:', error);
       setLocationSuggestions([]);
     }
   };
-  
-  const useCurrentLocation = async () => {
+
+  // Function to fetch weather by city name
+  const fetchWeatherByCity = async (locationQuery) => {
+    const apiKey = getApiKey();
+    
+    const response = await fetch(`${WEATHER_API_URL}/weather?q=${locationQuery}&appid=${apiKey}`);
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to fetch weather data');
+    }
+    
+    const data = await response.json();
+    return formatWeatherData(data);
+  };
+
+  // Function to fetch weather by coordinates
+  const fetchWeatherByCoordinates = async (coords) => {
+    const apiKey = getApiKey();
+    
+    const response = await fetch(
+      `${WEATHER_API_URL}/weather?lat=${coords.lat}&lon=${coords.lon}&appid=${apiKey}`
+    );
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to fetch weather data');
+    }
+    
+    const data = await response.json();
+    return formatWeatherData(data);
+  };
+
+  // Detect user's location
+  const detectUserLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error('Geolocation is not supported by your browser');
+      return;
+    }
+
     setIsUsingGeolocation(true);
     
-    if (!navigator.geolocation) {
-      toast({
-        title: "Error",
-        description: "Geolocation is not supported by your browser",
-        variant: "destructive",
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const coords = {
+          lat: position.coords.latitude,
+          lon: position.coords.longitude
+        };
+        setCoordinates(coords);
+        toast.success('Location detected successfully');
+      },
+      (error) => {
+        console.error('Geolocation error:', error);
+        toast.error('Unable to retrieve your location');
+        setIsUsingGeolocation(false);
+      }
+    );
+  };
+
+  // Query for city-based weather data
+  const cityQuery = useQuery({
+    queryKey: ['weather', 'city', location, hasApiKey],
+    queryFn: () => fetchWeatherByCity(location),
+    enabled: !!location && !isUsingGeolocation,
+    refetchOnWindowFocus: false,
+    retry: 1,
+  });
+
+  // Query for coordinate-based weather data
+  const coordinatesQuery = useQuery({
+    queryKey: ['weather', 'coordinates', coordinates?.lat, coordinates?.lon, hasApiKey],
+    queryFn: () => fetchWeatherByCoordinates(coordinates),
+    enabled: !!coordinates && isUsingGeolocation,
+    refetchOnWindowFocus: false,
+    retry: 1,
+  });
+
+  // Determine current query state based on which mode is active
+  const activeQuery = isUsingGeolocation ? coordinatesQuery : cityQuery;
+  const { data, isLoading, isError, error, refetch } = activeQuery;
+
+  // Use effect to initialize geolocation on component mount
+  useEffect(() => {
+    detectUserLocation();
+  }, []);
+
+  useEffect(() => {
+    if (data) {
+      setWeatherData(data);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (isError && error instanceof Error) {
+      toast.error(`Error: ${error.message}`, {
+        description: 'Please check the location and try again.',
       });
-      setIsUsingGeolocation(false);
+    }
+  }, [isError, error]);
+
+  const searchLocation = (newLocation) => {
+    if (!newLocation.trim()) {
+      toast.error('Please enter a location');
       return;
     }
     
-    try {
-      const position = await new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject);
-      });
-      
-      const { latitude, longitude } = position.coords;
-      
-      setIsLoading(true);
-      const response = await fetch(
-        `${WEATHER_API_URL}/weather?lat=${latitude}&lon=${longitude}&appid=${API_KEY}`
-      );
-      
-      if (!response.ok) {
-        throw new Error("Weather data not found");
-      }
-      
-      const data = await response.json();
-      const formattedData = formatWeatherData(data);
-      setWeatherData(formattedData);
-      setLocation(data.name);
-      
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: 
-          error.message === "User denied Geolocation"
-            ? "Location access denied. Please enable location services."
-            : "Failed to get current location",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-      setIsUsingGeolocation(false);
-    }
+    setIsUsingGeolocation(false);
+    setLocation(newLocation);
   };
-  
-  const saveRecentSearch = (location) => {
-    const recentSearches = JSON.parse(localStorage.getItem("recentSearches") || "[]");
-    
-    // Add the new search if it's not already in the list
-    if (!recentSearches.includes(location)) {
-      // Add to the beginning of the array and limit to 5 items
-      const updatedSearches = [location, ...recentSearches].slice(0, 5);
-      localStorage.setItem("recentSearches", JSON.stringify(updatedSearches));
-    }
+
+  // Function to switch to using geolocation
+  const useCurrentLocation = () => {
+    detectUserLocation();
   };
-  
-  const getRecentSearches = () => {
-    return JSON.parse(localStorage.getItem("recentSearches") || "[]");
-  };
-  
+
   return {
     weatherData,
     isLoading,
+    isError,
+    error,
     searchLocation,
     useCurrentLocation,
     isUsingGeolocation,
+    refetch,
     location,
+    hasApiKey,
+    checkForApiKey,
     locationSuggestions,
-    fetchLocationSuggestions,
-    getRecentSearches
+    fetchLocationSuggestions
   };
 };
