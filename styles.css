@@ -1,0 +1,591 @@
+
+/* Base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  color: white;
+  overflow-x: hidden;
+  background: linear-gradient(to bottom right, #4b6cb7, #182848);
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Weather container - backgrounds for different weather types */
+.weather-container {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  transition: background 0.5s ease;
+  overflow: hidden;
+}
+
+.weather-container.sunny {
+  background: linear-gradient(to bottom right, #ff7e5f, #feb47b);
+}
+
+.weather-container.cloudy {
+  background: linear-gradient(to bottom right, #6D7F92, #323e4a);
+}
+
+.weather-container.rainy {
+  background: linear-gradient(to bottom right, #536976, #292E49);
+}
+
+.weather-container.snowy {
+  background: linear-gradient(to bottom right, #9EADB9, #5D707F);
+}
+
+.weather-container.stormy {
+  background: linear-gradient(to bottom right, #232526, #414345);
+}
+
+.weather-container.foggy {
+  background: linear-gradient(to bottom right, #808080, #5D6E7A);
+}
+
+.weather-container.default {
+  background: linear-gradient(to bottom right, #4b6cb7, #182848);
+}
+
+/* App title */
+.app-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 3rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.5s ease;
+}
+
+/* Content wrapper */
+.content-wrapper {
+  width: 100%;
+  max-width: 32rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+/* Search bar */
+.search-bar-container {
+  width: 100%;
+  max-width: 32rem;
+  position: relative;
+}
+
+.search-bar {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem;
+  border-radius: 9999px;
+  backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.5s ease;
+}
+
+.search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 0.625rem 1rem;
+  font-size: 1rem;
+  color: white;
+  outline: none;
+  border-radius: 9999px;
+}
+
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.search-button, .location-button {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.search-button {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.search-button:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.location-button {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.location-button:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.location-button.active {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Suggestions */
+.suggestions {
+  position: absolute;
+  z-index: 20;
+  margin-top: 0.5rem;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-height: 15rem;
+  overflow-y: auto;
+}
+
+.suggestions ul {
+  list-style: none;
+}
+
+.suggestion-item {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.suggestion-item:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.suggestion-item-name {
+  font-weight: 500;
+  color: #333;
+}
+
+.suggestion-item-location {
+  font-size: 0.875rem;
+  color: #666;
+}
+
+/* Weather card */
+.weather-card {
+  width: 100%;
+  max-width: 26rem;
+  backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.5s ease;
+}
+
+.weather-card-header {
+  padding: 1.5rem 1.5rem 0.5rem;
+}
+
+.weather-card-location {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.location-info h3 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+}
+
+.location-date {
+  font-size: 1.125rem;
+  font-weight: 500;
+  margin-top: 0.25rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.temperature {
+  font-size: 3.125rem;
+  font-weight: bold;
+  color: white;
+}
+
+.weather-card-body {
+  padding: 1.5rem;
+  padding-top: 0;
+}
+
+.weather-description {
+  font-size: 1.25rem;
+  font-weight: 500;
+  text-transform: capitalize;
+  color: white;
+  margin-bottom: 1rem;
+}
+
+.weather-separator {
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.2);
+  margin: 1rem 0;
+}
+
+.weather-details {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  padding-top: 0.5rem;
+}
+
+.weather-detail-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.weather-detail-icon {
+  height: 1.5rem;
+  width: 1.5rem;
+  margin-bottom: 0.25rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.weather-detail-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.weather-detail-value {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: white;
+}
+
+/* Loading indicator */
+.loading-indicator {
+  width: 100%;
+  max-width: 26rem;
+  animation: fadeIn 0.5s ease;
+}
+
+.skeleton-card {
+  height: 17.5rem;
+  width: 100%;
+  border-radius: 0.75rem;
+  background-color: rgba(255, 255, 255, 0.2);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Initial message */
+.initial-message {
+  backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 2rem;
+  border-radius: 0.75rem;
+  text-align: center;
+  animation: fadeIn 0.5s ease;
+}
+
+.initial-message p {
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Weather animations */
+.weather-animation {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Utility classes */
+.hidden {
+  display: none;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes rain {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(1000%);
+    opacity: 0;
+  }
+}
+
+@keyframes snow {
+  0% {
+    transform: translateY(-100%) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(1000%) translateX(100px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes lightning-strike {
+  0%, 95%, 100% {
+    opacity: 0;
+  }
+  96%, 99% {
+    opacity: 1;
+  }
+}
+
+@keyframes lightning-flash {
+  0%, 95%, 100% {
+    opacity: 0;
+  }
+  96%, 99% {
+    opacity: 0.3;
+  }
+}
+
+@keyframes thunder-ripple {
+  0%, 90% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  95% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2);
+  }
+}
+
+@keyframes heavy-rain {
+  0% {
+    transform: translateY(-100%) rotate(5deg);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(1000%) rotate(10deg);
+    opacity: 0;
+  }
+}
+
+@keyframes fog {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes pulse-soft {
+  0% {
+    opacity: 0.8;
+    transform: scale(0.95);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0.8;
+    transform: scale(0.95);
+  }
+}
+
+/* Weather animation elements */
+.sun, .moon {
+  position: absolute;
+  animation: pulse-soft 4s infinite ease-in-out;
+}
+
+.sun {
+  top: 40px;
+  right: 40px;
+  width: 128px;
+  height: 128px;
+  color: #FDB813;
+}
+
+.moon {
+  top: 48px;
+  right: 48px;
+  width: 96px;
+  height: 96px;
+  color: white;
+}
+
+.cloud {
+  position: absolute;
+  color: rgba(255, 255, 255, 0.8);
+  animation: float 6s infinite ease-in-out;
+}
+
+.cloud-1 {
+  top: 64px;
+  right: 80px;
+  width: 80px;
+  height: 80px;
+}
+
+.cloud-2 {
+  top: 128px;
+  right: 240px;
+  width: 64px;
+  height: 64px;
+  animation-delay: 1.5s;
+}
+
+.cloud-3 {
+  top: 96px;
+  right: 160px;
+  width: 48px;
+  height: 48px;
+  animation-delay: 1s;
+}
+
+.rain-drop {
+  position: absolute;
+  background-color: rgba(176, 222, 255, 0.7);
+  width: 2px;
+  height: 24px;
+  border-radius: 999px;
+  animation: rain 1.5s infinite linear;
+}
+
+.snowflake {
+  position: absolute;
+  background-color: white;
+  border-radius: 999px;
+  animation: snow 10s infinite linear;
+}
+
+.lightning {
+  position: absolute;
+  opacity: 0;
+  background-color: white;
+  animation: lightning-strike 10s infinite;
+}
+
+.lightning-flash {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(255, 255, 255, 0.05);
+  opacity: 0;
+  animation: lightning-flash 10s infinite;
+}
+
+.thunder-ripple {
+  position: absolute;
+  border-radius: 999px;
+  background-color: rgba(255, 255, 255, 0.05);
+  opacity: 0;
+  animation: thunder-ripple 10s infinite;
+}
+
+.fog-layer {
+  position: absolute;
+  height: 80px;
+  width: 100%;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0));
+  animation: fog 20s infinite linear;
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 640px) {
+  .app-title {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .weather-card-location h3 {
+    font-size: 1.25rem;
+  }
+  
+  .location-date {
+    font-size: 1rem;
+  }
+  
+  .temperature {
+    font-size: 2.5rem;
+  }
+  
+  .weather-details {
+    gap: 0.5rem;
+  }
+  
+  .container {
+    padding: 1rem;
+  }
+}
