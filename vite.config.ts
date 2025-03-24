@@ -26,7 +26,7 @@ export default defineConfig(({ mode }) => ({
   build: {
     target: 'es2015',
   },
-  // Tell Vite this is a JavaScript project
+  // Tell Vite this is a TypeScript project
   optimizeDeps: {
     esbuildOptions: {
       target: 'es2015',
