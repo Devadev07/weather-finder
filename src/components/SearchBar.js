@@ -1,9 +1,25 @@
 
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, KeyboardEvent, useRef, useEffect } from 'react';
 import { Search, MapPin, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+
+interface LocationSuggestion {
+  name: string;
+  country: string;
+  state?: string;
+}
+
+interface SearchBarProps {
+  onSearch: (location: string) => void;
+  onUseCurrentLocation: () => void;
+  onInputChange?: (query: string) => void;
+  isLoading: boolean;
+  defaultValue?: string;
+  isUsingGeolocation?: boolean;
+  suggestions?: LocationSuggestion[];
+}
 
 const SearchBar = ({ 
   onSearch, 
@@ -13,11 +29,11 @@ const SearchBar = ({
   defaultValue = '',
   isUsingGeolocation = false,
   suggestions = []
-}) => {
+}: SearchBarProps) => {
   const [query, setQuery] = useState(defaultValue);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const suggestionsRef = useRef(null);
-  const inputRef = useRef(null);
+  const suggestionsRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSearch = () => {
     if (query.trim()) {
@@ -26,13 +42,13 @@ const SearchBar = ({
     }
   };
 
-  const handleKeyPress = (e) => {
+  const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       handleSearch();
     }
   };
 
-  const handleInputChange = (value) => {
+  const handleInputChange = (value: string) => {
     setQuery(value);
     if (onInputChange && value.trim().length > 2) {
       onInputChange(value);
@@ -42,7 +58,7 @@ const SearchBar = ({
     }
   };
 
-  const handleSuggestionClick = (suggestion) => {
+  const handleSuggestionClick = (suggestion: LocationSuggestion) => {
     const locationString = suggestion.state 
       ? `${suggestion.name}, ${suggestion.state}, ${suggestion.country}`
       : `${suggestion.name}, ${suggestion.country}`;
@@ -62,8 +78,8 @@ const SearchBar = ({
 
   // Close suggestions when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (suggestionsRef.current && !suggestionsRef.current.contains(event.target)) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (suggestionsRef.current && !suggestionsRef.current.contains(event.target as Node)) {
         setShowSuggestions(false);
       }
     };

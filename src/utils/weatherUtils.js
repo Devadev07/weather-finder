@@ -1,28 +1,27 @@
 
-import { WEATHER_MAPPING, WEATHER_TYPES } from "../lib/constants.js";
+import { WEATHER_MAPPING, WEATHER_TYPES } from "@/lib/constants";
 
-// Convert Kelvin to Celsius
-export function kelvinToCelsius(kelvin) {
+export const kelvinToCelsius = (kelvin) => {
   return Math.round(kelvin - 273.15);
-}
+};
 
-// Convert Kelvin to Fahrenheit
-export function kelvinToFahrenheit(kelvin) {
+export const kelvinToFahrenheit = (kelvin) => {
   return Math.round((kelvin - 273.15) * 9/5 + 32);
-}
+};
 
-// Convert meters per second to kilometers per hour
-export function metersPerSecToKmPerHour(mps) {
+export const metersPerSecToKmPerHour = (mps) => {
   return Math.round(mps * 3.6);
-}
+};
 
-// Get weather type based on icon code
-export function getWeatherType(iconCode) {
+export const metersPerSecToMilesPerHour = (mps) => {
+  return Math.round(mps * 2.237);
+};
+
+export const getWeatherType = (iconCode) => {
   return WEATHER_MAPPING[iconCode] || WEATHER_TYPES.DEFAULT;
-}
+};
 
-// Format weather data
-export function formatWeatherData(data) {
+export const formatWeatherData = (data) => {
   const weatherType = getWeatherType(data.weather[0].icon);
   
   return {
@@ -33,17 +32,16 @@ export function formatWeatherData(data) {
     humidity: data.main.humidity,
     windSpeed: metersPerSecToKmPerHour(data.wind.speed),
     description: data.weather[0].description,
-    weatherType: weatherType,
+    weatherType,
     weatherIcon: data.weather[0].icon,
     timezone: data.timezone,
     sunrise: data.sys.sunrise,
     sunset: data.sys.sunset,
     dateTime: data.dt
   };
-}
+};
 
-// Get formatted time
-export function getFormattedTime(timestamp, timezone) {
+export const getFormattedTime = (timestamp, timezone) => {
   // Create a date using UTC time
   const date = new Date(timestamp * 1000);
   
@@ -54,10 +52,9 @@ export function getFormattedTime(timestamp, timezone) {
   const locationTime = new Date(utcTime + (timezone * 1000));
   
   return locationTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
-}
+};
 
-// Get formatted date
-export function getFormattedDate(timestamp, timezone) {
+export const getFormattedDate = (timestamp, timezone) => {
   // Create a date using UTC time
   const date = new Date(timestamp * 1000);
   
@@ -68,9 +65,8 @@ export function getFormattedDate(timestamp, timezone) {
   const locationTime = new Date(utcTime + (timezone * 1000));
   
   return locationTime.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' });
-}
+};
 
-// Check if it's daytime
-export function isDayTime(current, sunrise, sunset) {
+export const isDayTime = (current, sunrise, sunset) => {
   return current > sunrise && current < sunset;
-}
+};

@@ -1,10 +1,13 @@
 
-import React from 'react';
-import { getFormattedDate, isDayTime } from "../utils/weatherUtils.js";
+import { WeatherData, getFormattedDate, isDayTime } from "@/utils/weatherUtils";
 import { Droplets, Wind, ThermometerSun } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
-const WeatherCard = ({ weatherData }) => {
+interface WeatherCardProps {
+  weatherData: WeatherData;
+}
+
+const WeatherCard = ({ weatherData }: WeatherCardProps) => {
   const {
     location,
     country,
@@ -14,13 +17,11 @@ const WeatherCard = ({ weatherData }) => {
     windSpeed,
     description,
     dateTime,
-    timezone,
-    sunrise,
-    sunset
+    timezone
   } = weatherData;
 
   const formattedDate = getFormattedDate(dateTime, timezone);
-  const isDay = isDayTime(dateTime, sunrise, sunset);
+  const isDay = isDayTime(dateTime, weatherData.sunrise, weatherData.sunset);
 
   return (
     <div className="w-full max-w-md backdrop-blur-md bg-white/20 border border-white/30 rounded-xl shadow-lg animate-fade-in">
