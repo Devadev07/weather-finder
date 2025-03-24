@@ -22,4 +22,14 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  // Explicitly set the build target
+  build: {
+    target: 'es2015',
+  },
+  // Tell Vite this is a JavaScript project
+  optimizeDeps: {
+    esbuildOptions: {
+      target: 'es2015',
+    }
+  }
 }));
