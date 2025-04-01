@@ -1,59 +1,18 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Weather App</title>
-    <meta name="description" content="Weather Application" />
+    <title>sunnycloud-search</title>
+    <meta name="description" content="Lovable Generated Project" />
     <meta name="author" content="Lovable" />
-    <link rel="stylesheet" href="styles.css">
+    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
   </head>
 
   <body>
-    <div class="weather-container default">
-      <div id="weatherAnimation" class="weather-animation"></div>
-      
-      <div class="container">
-        <h1 class="app-title">Weather</h1>
-        
-        <div class="content-wrapper">
-          <div class="search-bar-container">
-            <div class="search-bar">
-              <input 
-                type="search" 
-                id="searchInput" 
-                placeholder="Search location..." 
-                class="search-input"
-              />
-              <button id="searchButton" class="search-button">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
-              </button>
-              <button id="locationButton" class="location-button">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="location-icon"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-              </button>
-            </div>
-            <div id="suggestions" class="suggestions hidden"></div>
-          </div>
-          
-          <div id="loadingIndicator" class="loading-indicator hidden">
-            <div class="skeleton-card"></div>
-          </div>
-          
-          <div id="weatherCardContainer" class="weather-card-container hidden">
-            <!-- Weather card will be injected here -->
-          </div>
-          
-          <div id="initialMessage" class="initial-message">
-            <p id="messageText">Search for a location to see the weather.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-    
+    <div id="root"></div>
+    <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
-    <script src="constants.js"></script>
-    <script src="weatherUtils.js"></script>
-    <script src="weatherApp.js"></script>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
