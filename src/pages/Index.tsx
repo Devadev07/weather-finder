@@ -54,49 +54,51 @@ const Index = () => {
             onInputChange={fetchLocationSuggestions}
           />
           
-          <Tabs defaultValue="current" className="w-full" onValueChange={setActiveTab}>
-            <TabsList className="grid grid-cols-2 w-full bg-white/20">
-              <TabsTrigger value="current" className="text-white data-[state=active]:bg-white/30">
-                Current Weather
-              </TabsTrigger>
-              <TabsTrigger value="history" className="text-white data-[state=active]:bg-white/30">
-                Weather History
-              </TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="current" className="mt-4">
-              {isLoading ? (
-                <div className="w-full max-w-md animate-fade-in">
-                  <Skeleton className="h-[280px] w-full rounded-xl bg-white/20" />
-                </div>
-              ) : weatherData ? (
-                <WeatherCard weatherData={weatherData} />
-              ) : (
-                <div className="backdrop-blur-md bg-white/20 border border-white/30 p-8 rounded-xl text-center animate-fade-in">
-                  <p className="text-xl text-white/80">
-                    {isUsingGeolocation 
-                      ? "Detecting your location..." 
-                      : "Search for a location to see the weather."}
-                  </p>
-                </div>
-              )}
-            </TabsContent>
-            
-            <TabsContent value="history" className="mt-4">
-              {weatherData ? (
-                <WeatherCalendar 
-                  historyData={historyData}
-                  location={weatherData.location}
-                />
-              ) : (
-                <div className="backdrop-blur-md bg-white/20 border border-white/30 p-8 rounded-xl text-center animate-fade-in">
-                  <p className="text-xl text-white/80">
-                    Search for a location to see weather history.
-                  </p>
-                </div>
-              )}
-            </TabsContent>
-          </Tabs>
+          <div className="flex w-full justify-center">
+            <Tabs defaultValue="current" className="w-full" onValueChange={setActiveTab}>
+              <TabsList className="grid grid-cols-2 w-full bg-white/20">
+                <TabsTrigger value="current" className="text-white data-[state=active]:bg-white/30">
+                  Current Weather
+                </TabsTrigger>
+                <TabsTrigger value="history" className="text-white data-[state=active]:bg-white/30">
+                  Weather History
+                </TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="current" className="mt-4 flex justify-center">
+                {isLoading ? (
+                  <div className="w-full max-w-md animate-fade-in flex justify-center">
+                    <Skeleton className="h-[280px] w-full rounded-xl bg-white/20" />
+                  </div>
+                ) : weatherData ? (
+                  <WeatherCard weatherData={weatherData} />
+                ) : (
+                  <div className="backdrop-blur-md bg-white/20 border border-white/30 p-8 rounded-xl text-center animate-fade-in">
+                    <p className="text-xl text-white/80">
+                      {isUsingGeolocation 
+                        ? "Detecting your location..." 
+                        : "Search for a location to see the weather."}
+                    </p>
+                  </div>
+                )}
+              </TabsContent>
+              
+              <TabsContent value="history" className="mt-4 flex justify-center">
+                {weatherData ? (
+                  <WeatherCalendar 
+                    historyData={historyData}
+                    location={weatherData.location}
+                  />
+                ) : (
+                  <div className="backdrop-blur-md bg-white/20 border border-white/30 p-8 rounded-xl text-center animate-fade-in">
+                    <p className="text-xl text-white/80">
+                      Search for a location to see weather history.
+                    </p>
+                  </div>
+                )}
+              </TabsContent>
+            </Tabs>
+          </div>
         </div>
       </div>
     </div>
