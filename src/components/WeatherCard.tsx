@@ -17,11 +17,13 @@ const WeatherCard = ({ weatherData }: WeatherCardProps) => {
     windSpeed,
     description,
     dateTime,
-    timezone
+    timezone,
+    sunrise,
+    sunset
   } = weatherData;
 
   const formattedDate = getFormattedDate(dateTime, timezone);
-  const isDay = isDayTime(dateTime, weatherData.sunrise, weatherData.sunset);
+  const isDay = isDayTime(dateTime, sunrise, sunset);
 
   return (
     <div className="flex justify-center items-center w-full">
