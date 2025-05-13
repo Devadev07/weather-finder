@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useWeather } from "@/hooks/useWeather";
 import { useWeatherHistory } from "@/hooks/useWeatherHistory";
+import { useHistoricalWeather } from "@/hooks/useHistoricalWeather";
 import SearchBar from "@/components/SearchBar";
 import WeatherCard from "@/components/WeatherCard";
 import WeatherAnimation from "@/components/WeatherAnimation";
@@ -9,6 +10,7 @@ import WeatherCalendar from "@/components/WeatherCalendar";
 import { isDayTime } from "@/utils/weatherUtils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { toast } from "sonner";
 
 const Index = () => {
   const { 
@@ -25,12 +27,43 @@ const Index = () => {
   const { historyData } = useWeatherHistory({ weatherData });
   const [isDay, setIsDay] = useState(true);
   const [activeTab, setActiveTab] = useState("current");
+  const [coordinates, setCoordinates] = useState<{ lat: number; lon: number } | null>(null);
+  
+  // Use the new historical weather hook
+  const { 
+    historicalData,
+    isLoading: isLoadingHistorical
+  } = useHistoricalWeather({
+    latitude: coordinates?.lat,
+    longitude: coordinates?.lon,
+    location: weatherData?.location
+  });
+  
+  // Combine local and API historical data
+  const combinedHistoryData = [...historyData, ...historicalData];
   
   useEffect(() => {
     if (weatherData) {
       setIsDay(isDayTime(weatherData.dateTime, weatherData.sunrise, weatherData.sunset));
+      
+      // Extract coordinates from weather data if available
+      if (weatherData.latitude && weatherData.longitude) {
+        setCoordinates({ 
+          lat: weatherData.latitude, 
+          lon: weatherData.longitude 
+        });
+      }
     }
   }, [weatherData]);
+
+  // Show toast notification when historical data is loaded
+  useEffect(() => {
+    if (historicalData.length > 0) {
+      toast.success(`Loaded historical weather data for ${weatherData?.location}`, {
+        description: `${historicalData.length} days of historical data available`
+      });
+    }
+  }, [historicalData, weatherData?.location]);
 
   return (
     <div className={`weather-container ${weatherData?.weatherType || 'default'}`}>
@@ -86,8 +119,10 @@ const Index = () => {
               <TabsContent value="history" className="mt-4 flex justify-center">
                 {weatherData ? (
                   <WeatherCalendar 
-                    historyData={historyData}
+                    historyData={combinedHistoryData}
                     location={weatherData.location}
+                    isLoading={isLoadingHistorical && combinedHistoryData.length === 0}
+                    coordinates={coordinates}
                   />
                 ) : (
                   <div className="backdrop-blur-md bg-white/20 border border-white/30 p-8 rounded-xl text-center animate-fade-in">

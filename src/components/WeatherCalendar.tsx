@@ -6,10 +6,13 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Button } from "@/components/ui/button";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface WeatherCalendarProps {
   historyData: WeatherHistoryRecord[];
   location: string;
+  isLoading?: boolean;
+  coordinates?: { lat: number; lon: number } | null;
 }
 
 interface DayContentProps {
@@ -44,7 +47,7 @@ const DayContent = ({ date, historyData, location }: DayContentProps) => {
   );
 };
 
-const WeatherCalendar = ({ historyData, location }: WeatherCalendarProps) => {
+const WeatherCalendar = ({ historyData, location, isLoading = false, coordinates }: WeatherCalendarProps) => {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [selectedDayWeather, setSelectedDayWeather] = useState<WeatherHistoryRecord | null>(null);
   
@@ -94,7 +97,11 @@ const WeatherCalendar = ({ historyData, location }: WeatherCalendarProps) => {
         </Popover>
       </div>
       
-      {selectedDayWeather ? (
+      {isLoading ? (
+        <div className="bg-white/30 rounded-lg p-4">
+          <Skeleton className="h-24 w-full" />
+        </div>
+      ) : selectedDayWeather ? (
         <div className="bg-white/30 rounded-lg p-4">
           <div className="flex items-center justify-between mb-2">
             <p className="text-lg font-medium text-white">{format(new Date(selectedDayWeather.date), "MMMM d, yyyy")}</p>
@@ -110,6 +117,13 @@ const WeatherCalendar = ({ historyData, location }: WeatherCalendarProps) => {
       ) : (
         <div className="bg-white/30 rounded-lg p-4 text-center">
           <p className="text-white">No weather data available for this date.</p>
+        </div>
+      )}
+      
+      {coordinates && (
+        <div className="mt-4 text-xs text-white/70">
+          <p>Data provided by Open-Meteo API</p>
+          <p>Lat: {coordinates.lat.toFixed(4)}, Lon: {coordinates.lon.toFixed(4)}</p>
         </div>
       )}
     </div>

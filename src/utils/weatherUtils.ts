@@ -15,6 +15,8 @@ export interface WeatherData {
   sunrise: number;
   sunset: number;
   dateTime: number;
+  latitude?: number;
+  longitude?: number;
 }
 
 export const kelvinToCelsius = (kelvin: number): number => {
@@ -53,7 +55,9 @@ export const formatWeatherData = (data: any): WeatherData => {
     timezone: data.timezone,
     sunrise: data.sys.sunrise,
     sunset: data.sys.sunset,
-    dateTime: data.dt
+    dateTime: data.dt,
+    latitude: data.coord?.lat,
+    longitude: data.coord?.lon
   };
 };
 
