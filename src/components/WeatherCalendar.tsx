@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Calendar } from "@/components/ui/calendar";
 import { WeatherHistoryRecord } from "@/utils/weatherHistoryUtils";
@@ -32,12 +31,12 @@ const DayContent = ({ date, historyData, location }: DayContentProps) => {
   );
   
   if (!dayWeather) {
-    return <div>{date.getDate()}</div>;
+    return <div className="text-black">{date.getDate()}</div>;
   }
   
   return (
     <div className="relative flex flex-col items-center justify-center">
-      <div>{date.getDate()}</div>
+      <div className="text-black">{date.getDate()}</div>
       <img 
         src={`https://openweathermap.org/img/wn/${dayWeather.icon}.png`} 
         alt={dayWeather.condition}
