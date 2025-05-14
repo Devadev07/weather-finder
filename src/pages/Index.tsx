@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useWeather } from "@/hooks/useWeather";
 import { useWeatherHistory } from "@/hooks/useWeatherHistory";
@@ -7,12 +6,14 @@ import SearchBar from "@/components/SearchBar";
 import WeatherCard from "@/components/WeatherCard";
 import WeatherAnimation from "@/components/WeatherAnimation";
 import WeatherCalendar from "@/components/WeatherCalendar";
+import WeatherHistoryTable from "@/components/WeatherHistoryTable";
 import { isDayTime } from "@/utils/weatherUtils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 
 const Index = () => {
+  
   const { 
     weatherData, 
     isLoading, 
@@ -89,12 +90,15 @@ const Index = () => {
           
           <div className="flex w-full justify-center">
             <Tabs defaultValue="current" className="w-full" onValueChange={setActiveTab}>
-              <TabsList className="grid grid-cols-2 w-full bg-white/20">
+              <TabsList className="grid grid-cols-3 w-full bg-white/20">
                 <TabsTrigger value="current" className="text-white data-[state=active]:bg-white/30">
                   Current Weather
                 </TabsTrigger>
                 <TabsTrigger value="history" className="text-white data-[state=active]:bg-white/30">
                   Weather History
+                </TabsTrigger>
+                <TabsTrigger value="report" className="text-white data-[state=active]:bg-white/30">
+                  Data Report
                 </TabsTrigger>
               </TabsList>
               
@@ -128,6 +132,21 @@ const Index = () => {
                   <div className="backdrop-blur-md bg-white/20 border border-white/30 p-8 rounded-xl text-center animate-fade-in">
                     <p className="text-xl text-white/80">
                       Search for a location to see weather history.
+                    </p>
+                  </div>
+                )}
+              </TabsContent>
+              
+              <TabsContent value="report" className="mt-4 flex justify-center">
+                {weatherData ? (
+                  <WeatherHistoryTable 
+                    historyData={combinedHistoryData}
+                    location={weatherData.location}
+                  />
+                ) : (
+                  <div className="backdrop-blur-md bg-white/20 border border-white/30 p-8 rounded-xl text-center animate-fade-in">
+                    <p className="text-xl text-white/80">
+                      Search for a location to view weather data report.
                     </p>
                   </div>
                 )}
